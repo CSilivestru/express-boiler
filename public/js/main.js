@@ -1,51 +1,20 @@
-var AppRouter = Backbone.Router.extend({
-    routes: {
-        //Include your routes here.
-        //routeName: functionName
-    },
+// Author: Thomas Davis <thomasalwyndavis@gmail.com>
+// Filename: main.js
 
-    initialize: function () {
+// Require.js allows us to configure shortcut alias
+// Their usage will become more apparent futher along in the tutorial.
+require.config({
+  paths: {
+    jquery: 'libs/jquery/jquery-min',
+    underscore: 'libs/underscore/underscore-min',
+    backbone: 'libs/backbone/backbone-min',
+    templates: '../templates'
+  }
 
-    },
-
-    /*Very basic auth
-    checkAuth: function(eventString) {
-        //I don't like this if statement -- seems smelly...
-        switch (eventString) {
-            case ("route:registration"):
-            case ("route:signin"):
-                //No need to auth on these routes
-                break;
-            default:
-                $.ajax({
-                    type: "GET",
-                    url: "/api/user/checkAuth",
-                    success: function(user) {
-                        if (!user) {
-                            alert("You are not signed in!");
-                            Jr.Navigator.navigate('', {
-                            trigger: true,
-                              animation: {
-                                type: Jr.Navigator.animations.SLIDE_STACK,
-                                direction: Jr.Navigator.directions.LEFT
-                              }
-                            });
-                        }
-                        else
-                            window.user = user;
-                    },
-                    error: function(err) { console.log(err); }
-                });
-        }
-    }*/
 });
 
-utils.loadTemplate([], function() {
-    app = new AppRouter();
-    Backbone.history.start();
+require(['app'], function(App){
+  // The "app" dependency is passed in as "App"
+  // Again, the other dependencies passed in are not "AMD" therefore don't pass a parameter to this function
+  App.initialize();
 });
-
-Backbone.View.prototype.close = function(){
-      this.remove();
-      this.unbind();
-}
