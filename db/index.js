@@ -7,9 +7,6 @@ var jWorkflow = require('jWorkflow'),
     Setting,
     isMappedAlready;
 
-var MONGOURL = "mongodb://heroku:rush@ds035147.mongolab.com:35147/heroku_app11055689";
-
-
 function createDb(initialValue, baton) {
     baton.take();
     passport = initialValue;
@@ -20,7 +17,7 @@ function createDb(initialValue, baton) {
     var connectionString = 
         process.env.MONGOLAB_URI || 
         process.env.MONGOHQ_URL || 
-        'mongodb://localhost/rush';
+        'mongodb://localhost/frontier';
 
     var theport = process.env.PORT || 5000;
     var mongoOptions = { db: { safe: true }};
@@ -36,13 +33,46 @@ function createDb(initialValue, baton) {
     baton.pass();
 }
 
+function createModels (previous, baton) {
+    baton.take();
+    Setting = require("./models/setting").Setting;
+    User = require("./models/user").User;
+    baton.pass();
+}
+
+function initSettings (previous, baton) {
+    baton.take();
+    that = this;
+    Setting.findOne({type: "init"}, function(err, item) {
+        if (err) {
+            console.log("Error finding init setting");
+            baton.drop();
+        }
+        else if (item && item.value == "true") {
+            console.log("Connected to database and ready");
+            that.isMappedAlready = true;
+            baton.pass();
+        }
+        else {
+            console.log("Blank slate -- initializing...");
+            Setting.create({type: "init", value: true}, function(err, setting) {
+                if (err) {
+                    console.log("Error setting init value: ", err);
+                    baton.drop();
+                }
+                else
+                    baton.pass();
+            });
+        }
+    });
+}
+
 function initPassport (previous, baton) {
     baton.take();
-    //The next three lines are designed for user authentication using mongodb with passport. It's quick, simple, and *reasonably* secure.
-    /*passport.use(new LocalStrategy(User.authenticate()));
+    passport.use(new LocalStrategy(User.authenticate()));
 
     passport.serializeUser(User.serializeUser());
-    passport.deserializeUser(User.deserializeUser()); */
+    passport.deserializeUser(User.deserializeUser());
 
     baton.pass();
 }
@@ -61,25 +91,29 @@ function mapData(previous, baton) {
     }
 }
 
-function initDB(passport) {
-    try {
-        console.log("STARTING");
-        var initWorkflow = jWorkflow.order(createDb)
-            .andThen(initPassport) //Remove if not using passport
-            //include any other bootstraping you need to do here
-            .andThen(mapData); //Include if you need to bootstrap data, remove otherwise
+/*-------PUBLIC METHODS-------*/
 
-        initWorkflow.start({initialValue: passport}); //Get rid of passport if not using auth
-    }
-    catch(e) {
-        //OMG WTF Whahappened?
-        console.log(e);
-    }
-}
+var self = {
+    init: function(passport) {
+        try {
+            console.log("STARTING");
+            var initWorkflow = jWorkflow.order(createDb)
+                .andThen(createModels)
+                .andThen(initSettings)
+                .andThen(initPassport)
+                .andThen(mapData); //Include if you need to bootstrap data, remove otherwise
 
-module.exports = {
-    init: initDB,
+            initWorkflow.start({initialValue: passport}); //Get rid of passport if not using auth
+        }
+        catch(e) {
+            //OMG WTF Whahappened?
+            console.log(e);
+        }
+    },
+
     getMongoose: function() {
         return mongoose;
     }
 };
+
+module.exports = self;

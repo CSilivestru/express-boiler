@@ -13,7 +13,7 @@ function run(opts) {
         app.use(express.bodyParser()),
         app.use(express.static(conf.dirs.client));
         app.use(express.methodOverride());
-        app.use(express.cookieParser("Insert Cookie Code"));
+        app.use(express.cookieParser("clubsandwichofpain"));
         app.use(express.session());
         app.use(passport.initialize());
         app.use(passport.session());
