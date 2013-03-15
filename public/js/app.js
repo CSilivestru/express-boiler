@@ -3,21 +3,21 @@ define([
   'jquery', 
   'underscore', 
   'backbone',
-  'router', // Request router.js
+  'router'
 ], function($, _, Backbone, Router){
   var initialize = function(){
-    // Pass in our Router module and call it's initialize function
     Router.initialize();
   };
 
   Backbone.View.prototype.close = function(){
-      this.$el.remove();
+      this.$el.empty();
       this.unbind();
-      _.each(this.subviews, function(subview){
-          if (subview.close){
-              subview.close();
-          }
-      });
+      if (this.subviews)
+          _.each(this.subviews, function(subview){
+              if (subview.close){
+                  subview.close();
+              }
+          });
   };
 
   return { 
