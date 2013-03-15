@@ -1,5 +1,7 @@
+
 module.exports = {
     load: function() {
-        //Loading stuff
+        var userDAL = require("./access/userdal");
+        userDAL.create("chris", "password", function(user) {console.log(user);});
     }
 };

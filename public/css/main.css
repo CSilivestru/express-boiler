@@ -1,9 +1,55 @@
-
 .map { 
     width: 100%; 
     height: 100%;
 }
 
+.max-everything {
+    width: 100%;
+    height: 100%;
+}
+
 .map img {
     max-width:none; 
+}
+
+.mobile-container {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
+    height: 100%;
+}
+
+.bottom-stick {
+    position: absolute;
+    bottom: 10px;
+}
+
+.vertical-spacer-below-title {
+    padding-top: 44px;
+}
+
+.top-spacer20 {
+    margin-top: 20px;
+}
+
+.bottom-spacer20 {
+    margin-bottom: 20px;
+}
+
+.center-nav-title {
+    position: absolute;
+    left: 45%;
+    margin-left: -12px;
+}
+
+.footer {
+    bottom: 0;
+    height: 50px;
+    left: 0;
+    position: fixed;
+    right: 0;
+}
+
+.hide {
+    display: none;
 }
